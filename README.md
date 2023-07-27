@@ -1,3 +1,19 @@
+This is a (partial, and from what I can tell, not entirely correct) python implementation of the paper [stylizing-video-by-example](https://dcgi.fel.cvut.cz/publications/2019/jamriska-tog-ebsynth) making use of RAFT optical flow and PhyCV physics based edge detection. 
+
+The results are not on par with what I'd like them to be, and a lot of experimentation will be required. This is a work in progress. Feel free to mess around with it as you please.
+
+To use, clone my [ebsynth fork](https://github.com/Trentonom0r3/ebsynth) and build the project. (If you have rtx 3060 or higher, you should be able to build with cuda, which makes things MUCH faster.)
+
+After that, move the created ```ebsynth.exe``` executable into the same directory as the ```main.py``` script.
+
+
+```
+Usage: python main.py <style_file> <input_dir>
+```
+
+This has only been tested for my uses and I haven't ensured it'll work for others. Apologies if it does not. 
+
+
 # RAFT
 This repository contains the source code for our paper:
 
