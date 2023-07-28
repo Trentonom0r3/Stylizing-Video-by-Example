@@ -18,6 +18,14 @@ python main.py <style_file> <input_dir>
 
 https://github.com/Trentonom0r3/Stylizing-Video-by-Example/assets/130304830/567c1317-d991-4284-9a6a-80518e784686
 
+## To do:
+
+- Modify Ebsynth to accept cv::mat instead of file paths, so we only have to save the output files.
+- Add Multi-Keyframe support
+- Add extra Temporal Smoothing/Denoising Step
+- [This will take a bit of exploration] The ability to start with style frames, and raw flow data from 3d modeling software.
+- Make things more modular, easier to change and use in other things. (I want to use this in my AE extension, and I'd like it to be easily accessed by anyone else, I think It could lead to some cool extensions for SD and/or touchdesigner)
+
 
 
 # RAFT
