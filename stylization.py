@@ -9,13 +9,13 @@ def stylize_frame(style_file, source_file, g_col_file, edge_source_file1, edge_g
         ebsynth_exec,
         "-style", style_file,  # S - style exemplar
         "-guide", source_file, g_col_file, # Gcol - style exemplar as the color guide
-        "-weight", "5.0",
+        "-weight", "6.0",
     ]
     # Gmask isn't needed.
     if edge_source_file1 is not None and edge_g_col_file1 is not None:
         cmd.extend(["-guide", edge_source_file1, edge_g_col_file1, "-weight", "0.5"])  # Gedge - edge guide for target and source frames
     if flow_source_file is not None and flow_g_col_file is not None:
-        cmd.extend(["-guide", flow_source_file, flow_g_col_file, "-weight", "2.0"])  # Gpos - positional guide using optical flow
+        cmd.extend(["-guide", flow_source_file, flow_g_col_file, "-weight", "1.5"])  # Gpos - positional guide using optical flow
     if stylized_image_file is not None and o_hat_i_file is not None:
         cmd.extend(["-guide", stylized_image_file, o_hat_i_file, "-weight", "0.5"])  # Gtemp - temporal guide using previous stylized frame
     cmd.extend([

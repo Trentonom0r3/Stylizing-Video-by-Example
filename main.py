@@ -13,13 +13,14 @@ import numpy as np
 import cv2
 from tqdm import tqdm
 from stylization import stylize_frame
-from optical_flow import compute_optical_flow, warp_image
-from edge_detection import compute_edge_PAGE, compute_edge_guide, compute_edge
+from optical_flow import compute_optical_flow, warp
+from edge_detection import compute_edge_PAGE, compute_edge_guide
 
 def load_image(imfile):
     img = np.array(Image.open(imfile).convert('RGB')).astype(np.uint8)
     img = torch.from_numpy(img).permute(2, 0, 1).float()
-    return img[None].to(DEVICE), img.shape[1:]
+    return img[None].to(DEVICE), img.shape[1:][::-1]
+
 
 
 DEVICE = 'cuda'
@@ -43,7 +44,7 @@ def main(style_file, input_dir, start_frame):
     )
 
     print('Computing edge maps for all images...')
-    edge_files = [compute_edge(img_file) for img_file in tqdm(image_files)]
+    edge_files = [compute_edge_guide(img_file) for img_file in tqdm(image_files)]
 
     flow_output_dir = os.path.abspath(os.path.join(input_dir, "..", "Output", "flow"))
     os.makedirs(flow_output_dir, exist_ok=True)
@@ -71,12 +72,32 @@ def main(style_file, input_dir, start_frame):
 
         # Warp the stylized image
         stylized_image = cv2.imread(o_i_file)
-        flow = np.load(d_files[i-1][1]) if i > start_frame else None  # Adjusted index
-        warped_image = warp_image(stylized_image, flow)
-        o_hat_i_file = os.path.join(output_dir, f'warped{i + 1}.png')
-        cv2.imwrite(o_hat_i_file, warped_image)
-        print(f"Using flow calculated from frame {i} to frame {i+1} to warp {o_i_file} into {o_hat_i_file}")
-        
+        stylized_image = cv2.cvtColor(stylized_image, cv2.COLOR_BGR2RGB)  # Convert from BGR to RGB
+        stylized_image = torch.from_numpy(stylized_image).permute(2, 0, 1).float() / 255.0  # Convert to tensor and normalize
+        stylized_image = stylized_image.unsqueeze(0).to(DEVICE)
+
+
+        flow = None
+        if i > start_frame:
+            flow = np.load(d_files[i-1][1])  # Adjusted index
+            flow = torch.from_numpy(flow).permute(2, 0, 1).float()
+            flow = flow.unsqueeze(0).to(DEVICE)
+            flow *= -1  # Invert the flow
+
+
+        if flow is not None:
+            warped_image = warp(stylized_image, flow)
+            # Convert back to numpy
+            warped_image_np = warped_image.squeeze(0).permute(1, 2, 0).cpu().detach().numpy()
+            # Clip the pixel values to [0,1]
+            warped_image_np = np.clip(warped_image_np, 0, 1)
+            # Convert the data type to uint8
+            warped_image_np = (warped_image_np * 255).astype(np.uint8)
+            # Convert from RGB to BGR
+            warped_image_np = cv2.cvtColor(warped_image_np, cv2.COLOR_RGB2BGR)
+            o_hat_i_file = os.path.join(output_dir, f'warped{i + 1}.png')
+            cv2.imwrite(o_hat_i_file, warped_image_np)
+                    
         if i < len(image_files) - 1:
             _ = stylize_frame(
                 style_file,  # 
@@ -84,8 +105,8 @@ def main(style_file, input_dir, start_frame):
                 image_files[i],  # Gcol target frame, the next frame in the sequence
                 edge_files[0],  # Gedge intiial
                 edge_files[i],  # Gedge target frame, the next frame in the sequence 
-                d_files[0][2] if i > start_frame else None,  # Gpos initial (Adjusted index)
-                d_files[i-1][2], # Gpos target frame, the next frame in the sequence (Adjusted index)
+                d_files[0][2],  # Gpos initial (Adjusted index)
+                d_files[i-1][2] if start_frame >= i else None, # Gpos target frame, the next frame in the sequence (Adjusted index)
                 new_o_i_file,  # Output file
                 style_file,  # Gtemp: Use the previously styled frame
                 o_hat_i_file,  # Gtemp: Use the previously styled frame, warped to the next frame in the sequence
