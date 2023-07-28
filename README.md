@@ -1,3 +1,25 @@
+This is a [Partial] Python Implementation of the Paper "Stylizing Video by Example" by Jamriska et al.
+Currently, stylization is only based on a single keyframe. I'll be updated to use multiple at a later time. 
+Instead of SIFT flow like in the original paper, I'm using RAFT optical flow, and PhyCV edge detection to get the edges.
+
+## Usage
+- Clone my Ebsynth Fork and build the executable. 
+- Clone this Repo.
+- Move the Ebsynth.exe file into the same folder as ```main.py```
+- Run!
+
+```
+python main.py <style_file> <input_dir>
+```
+
+## Demo
+
+
+
+https://github.com/Trentonom0r3/Stylizing-Video-by-Example/assets/130304830/567c1317-d991-4284-9a6a-80518e784686
+
+
+
 # RAFT
 This repository contains the source code for our paper:
 
