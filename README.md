@@ -12,6 +12,10 @@ Instead of SIFT flow like in the original paper, I'm using RAFT optical flow, an
 python main.py <style_file> <input_dir>
 ```
 
+```
+pip install phycv 
+```
+
 ## Demo
 
 
