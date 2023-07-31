@@ -25,7 +25,7 @@ https://github.com/Trentonom0r3/Stylizing-Video-by-Example/assets/130304830/567c
 - Add extra Temporal Smoothing/Denoising Step
 - [This will take a bit of exploration] The ability to start with style frames, and raw flow data from 3d modeling software.
 - Make things more modular, easier to change and use in other things. (I want to use this in my AE extension, and I'd like it to be easily accessed by anyone else, I think It could lead to some cool extensions for SD and/or touchdesigner)
-
+- add SIFT flow option, command line args to make it easier to choose different methods for guides
 
 
 # RAFT
