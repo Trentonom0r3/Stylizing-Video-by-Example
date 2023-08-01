@@ -12,6 +12,20 @@ Instead of SIFT flow like in the original paper, I'm using RAFT optical flow, an
 python main.py <style_file> <input_dir>
 ```
 
+OR
+
+```
+python main.py <style_file> <input_dir> [--flow_quality {low,high}] [--edge_method {page,classic,pst}]
+```
+
+- flow_quality low uses opencv farneback. Faster, but lower accuracy. Default Option.
+- flow_quality high uses RAFT. Slower, but much better accuracy.
+
+- edge_method options:
+      - PAGE : Directional Edge Detection. Runs on GPU, takes less than a minute to run. Most Accurate of the 3. Tends to have great fine details as well as overall structure.
+      - Classic: Gaussian Edge Detection as Defined in the original paper. Runs on CPU, seconds to run. Accurate in some ways, inaccurate in others. This is a good middle-ground. 
+      - PST: Physics based "canny" edge detection. Runs on GPU, takes less than a minute. This produces great structural results, but fine details tend to be lost.
+
 ```
 pip install phycv 
 ```
